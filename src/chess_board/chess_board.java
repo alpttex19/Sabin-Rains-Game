@@ -33,6 +33,8 @@ class chess_board extends JFrame{
         setVisible(true);
     }
 
+    
+
     public void GenerateGrid(){
         
     }
