@@ -1,16 +1,15 @@
 package chess_board;
 import java.awt.*;
 import java.awt.event.*;
-
-import javax.imageio.ImageIO;
-//import javax.swing.*;
-import java.io.*;
-
-import java.awt.*;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 
+
 public class HexagonGrid extends JPanel{
-    private int boardSize = 600;
+    private int size = 20; // size of the small hexagons
+    private int padding = 16; // space between hexagons
     public HexagonGrid(){
         super();
     }
@@ -27,10 +26,28 @@ public class HexagonGrid extends JPanel{
 
         return new Polygon(x, y, x.length);
     }
+
+    public List<Point> returnAllgrid(int centerX, int centerY){                
+        int[] num = {5,6,7,8,9,8,7,6,5};
+        List<Point> points = new ArrayList<>();
+        for (var i = 0; i < num.length; i++){
+            int wid = num[i];
+            for (int j = 0; j <= wid; j ++) {
+                // Generate the small hexagon
+                int x = centerX + (int)(((j)-(wid/2.0)) * (size + padding));
+                int y = centerY + (int)((i-4) * (size + padding - 5.6));
+                // collect the coordinates of the small hexagons
+                points.add(new Point(x, y));
+            }
+        }
+        return points;
+    }
     
     public void paintPolygon(Graphics g, Polygon p, Color c){
         super.paintComponent(g);
-        g.setColor(c);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(c);
+        g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
         g.drawPolygon(p);
     }
 
@@ -40,34 +57,11 @@ public class HexagonGrid extends JPanel{
         g.fillPolygon(p);
     }
 
-    public void paintAllgrid(Graphics g,int centerX, int centerY){
-        super.paintComponent(g);
-        try{
-            Image im = ImageIO.read(new File("src/sources/backgroud.jpg"));
-            g.drawImage(im, 0, 0, boardSize, boardSize, null);
-        } catch(IOException e1){}                  
-
-        int size = 20; // size of the small hexagons
-        int padding = 16; // space between hexagons
-
-        int[] num = {5,6,7,8,9,8,7,6,5};
-
-        for (var i = 0; i < num.length; i++){
-            int wid = num[i];
-            for (int j = 0; j <= wid; j ++) {
-                // Generate the small hexagon
-                int x = centerX + (int)(((j)-(wid/2.0)) * (size + padding));
-                int y = centerY + (int)((i-4) * (size + padding - 5.6));
-                Polygon hexagon = generateHexagon(x, y, size);
-
-                // Draw the small hexagon
-                // g.setColor(Color.BLACK);
-                // g.drawPolygon(hexagon);
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setColor(Color.BLACK);
-                g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
-                g2.drawPolygon(hexagon);
-            }
+    public void paintAllgrid(Graphics g, List<Point> points){
+        for (Point point : points){
+            Polygon hexagon = generateHexagon(point.x, point.y, size);
+            paintPolygon(g, hexagon, Color.BLACK);
         }
     }
+
 }
