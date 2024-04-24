@@ -18,36 +18,18 @@ class chess_board extends JFrame{
         // Set the size of the chess board
         setSize(width, height);
         setResizable(false);
-        // Set the background color of the chess board
-        setBackground(Color.WHITE);
-        // Set the visibility of the chess board
-        setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // JPanel gridPanel = new JPanel();
 
-        GridPanel gridPanel = new GridPanel();
-        gridPanel.setLayout(null);
-        // gridPanel.setLayout(null);
-        // gridPanel.setLayout(null);
-        // gridPanel.setSize(width, height);
-        // JPanel imagePanel = new JPanel();
-        // imagePanel.setLayout(null);
-        // imagePanel.setSize(width, height);
-
-        // ImageIcon imageBackground = new ImageIcon("src/sources/backgroud.jpg");
-        // JLabel imageLabel = new JLabel(imageBackground, SwingConstants.CENTER);
-        // imageLabel.setBounds(100, 100, boardSize, boardSize);
-        // imagePanel.add(imageLabel);
-        countTxt = new JLabel("welcome to the chess board");
+        GridPanel backgdPanel = new GridPanel();
+        backgdPanel.setLayout(null);
+        countTxt = new JLabel();
         countTxt.setFont(new Font("Arial", Font.BOLD, 20));
-        countTxt.setBounds(100, 0, 300, 50);
-        gridPanel.add(countTxt);
+        countTxt.setText("Chess Board");
+        countTxt.setBounds(250, 100, 300, 50);
+        backgdPanel.add(countTxt);
 
-        // hexagonGrid = new HexagonGrid();
-        // hexagonGrid.paintAllgrid(getGraphics(),300, 350);
-        // gridPanel.add(hexagonGrid);
-        gridPanel.add(new HexagonGrid());
-        add(gridPanel);
+        backgdPanel.add(new HexagonGrid());
+        add(backgdPanel);
         setVisible(true);
     }
 

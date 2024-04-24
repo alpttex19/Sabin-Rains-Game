@@ -3,14 +3,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+//import javax.swing.*;
 import java.io.*;
 
 import java.awt.*;
 import javax.swing.*;
 
 public class HexagonGrid extends JPanel{
-    private int boardSize = 400;
+    private int boardSize = 600;
     public HexagonGrid(){
         super();
     }
@@ -44,7 +44,7 @@ public class HexagonGrid extends JPanel{
         super.paintComponent(g);
         try{
             Image im = ImageIO.read(new File("src/sources/backgroud.jpg"));
-            g.drawImage(im, 100, 150, boardSize, boardSize, null);
+            g.drawImage(im, 0, 0, boardSize, boardSize, null);
         } catch(IOException e1){}                  
 
         int size = 20; // size of the small hexagons
@@ -61,8 +61,12 @@ public class HexagonGrid extends JPanel{
                 Polygon hexagon = generateHexagon(x, y, size);
 
                 // Draw the small hexagon
-                g.setColor(Color.BLACK);
-                g.drawPolygon(hexagon);
+                // g.setColor(Color.BLACK);
+                // g.drawPolygon(hexagon);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setColor(Color.BLACK);
+                g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+                g2.drawPolygon(hexagon);
             }
         }
     }
