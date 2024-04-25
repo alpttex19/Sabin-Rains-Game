@@ -11,7 +11,7 @@ class ChessBoard extends JFrame{
     private int height = 600;
     private int mouseX = -1;
     private int mouseY = -1;
-    private JLabel countTxt;
+    //private JLabel countTxt;
     private LayeredPane layeredPane;
     private HexagonPanel preDrawnHexPanel;
     private PointPanel pointsPanel;
@@ -29,24 +29,7 @@ class ChessBoard extends JFrame{
         layeredPane = new LayeredPane();
         layeredPane.setPreferredSize(new Dimension(width, height));
         add(layeredPane);
-
         setVisible(true);
-        /* 
-        addMouseMotionListener(new MouseMotionAdapter() {
-            public void mouseMoved(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-                for (Point p : points) {
-                    if (mouseX - p.x < 10 && mouseY - p.y < 10) {
-                        mouseX = p.x;
-                        mouseY = p.y;
-                        break;
-                    }
-                repaint();
-                }
-            }
-        });
-        */
     }
     
     private class LayeredPane extends JLayeredPane {
@@ -62,23 +45,24 @@ class ChessBoard extends JFrame{
 
 
             points = preDrawnHexPanel.returnAllgrid(300, 300);
+            for (Point p : points) {
+                System.out.print(p);
+            }
             pointsPanel = new PointPanel(points);
             pointsPanel.setBounds(0, 0, width, height);
             this.add(pointsPanel, JLayeredPane.MODAL_LAYER);
 
             addMouseListener(new MouseAdapter() {
+                String pointColor = "red";
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) { // Check if left button clicked
                         mouseX = e.getX();
                         mouseY = e.getY();
-                        System.out.print("the first point is: ");
-                        System.out.println(points.get(0));
                         for (Point p : points) {
                             double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
-                            if (distance < 8) {
-                                System.out.print("the clicked point is: ");
-                                System.out.println(p);
-                                pointsPanel.setPointStatus(p, "red");
+                            if (distance < 15 && (pointsPanel.getPointStatus(p).equals("empty"))) {
+                                pointsPanel.setPointStatus(p, pointColor);
+                                pointColor = pointColor.equals("red") ? "blue" : "red";
                                 repaint();
                                 break;
                             }
@@ -86,6 +70,25 @@ class ChessBoard extends JFrame{
                     }
                 }
             });
+
+            addMouseMotionListener(new MouseMotionAdapter() {
+                int lastX = -1;
+                int lastY = -1;
+                public void mouseMoved(MouseEvent e) {
+                    mouseX = e.getX();
+                    mouseY = e.getY();
+                    for (Point p : points) {
+                        double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
+                        if (distance < 15 && (p.x != lastX || lastY != p.y)) {
+                            preDrawnHexPanel.paintOnegrid(p.x, p.y);
+                            lastX = p.x;
+                            lastY = p.y;
+                            break;
+                        }
+                    }
+                }
+            });
+            
         }
     }
     /* 
@@ -96,8 +99,7 @@ class ChessBoard extends JFrame{
             hexagonGrid.paintPolygon(g, polygonA, Color.RED);
         }
     }
-    */
-
+    
     private void drawHexagon(Graphics g, int x, int y, int size) {
         Polygon hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
@@ -106,6 +108,7 @@ class ChessBoard extends JFrame{
         }
         g.drawPolygon(hexagon);
     }
+    */
 
     public void GenerateGrid(){
         
@@ -119,6 +122,6 @@ class ChessBoard extends JFrame{
     // Create a new chess board
     public static void main(String[] args) {
         // Create a new chess board
-        ChessBoard app = new ChessBoard();
+        new ChessBoard();
     }
 }

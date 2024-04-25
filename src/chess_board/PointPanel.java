@@ -1,6 +1,7 @@
 package chess_board;
 import java.awt.*;
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;  
@@ -29,7 +30,11 @@ public class PointPanel extends JPanel{
         for (Point p : this.flagPoints) {
             String status = this.pointStatusMap.get(p);
             if (status.equals("empty")) {
-                continue;
+                if (isReachable(p)) {
+                    g.setColor(Color.GREEN);
+                    g.fillOval(p.x - 5, p.y - 5, 10, 10);
+                    continue;
+                }    
             }
             else if (status.equals("red")) {
                 g.setColor(Color.RED);
@@ -37,13 +42,13 @@ public class PointPanel extends JPanel{
             else if (status.equals("blue")) {
                 g.setColor(Color.BLUE);
             }
-            g.fillOval(p.x - 5, p.y - 5, 10, 10);
+            g.fillOval(p.x - 13, p.y - 13, 26, 26);
         }
     }
     // Paint the reachable flags
-    public void paintReachableFlags(Graphics g, List<Point> points) {
-        for (Point p : points) {
-            if (isReachable(p, points)) {
+    public void paintReachableFlags(Graphics g) {
+        for (Point p : this.flagPoints) {
+            if (isReachable(p)) {
                 g.setColor(Color.GREEN);
                 g.fillOval(p.x - 2, p.y - 2, 4, 4);
             }
@@ -60,29 +65,28 @@ public class PointPanel extends JPanel{
         return this.pointStatusMap.get(point);
     }
 
-    // given the center point, return the six points of the hexagon
-    public List<Point> returnHexagonPoints(Point center, List<Point> points) {
-        int x = center.x;
-        int y = center.y;
-        points.add(new Point(x, y - padding));
-        points.add(new Point(x + (int)(padding * Math.sqrt(3) / 2), y - padding / 2));
-        points.add(new Point(x + (int)(padding * Math.sqrt(3) / 2), y + padding / 2));
-        points.add(new Point(x, y + padding));
-        points.add(new Point(x - (int)(padding * Math.sqrt(3) / 2), y + padding / 2));
-        points.add(new Point(x - (int)(padding * Math.sqrt(3) / 2), y - padding / 2));
-
-        return points;
+    // find the neighbors of the point
+    public List<Point> findNeighbors(Point center) {
+        List<Point> neighbors = new ArrayList<>( );
+        neighbors.add(new Point(center.x - 18, center.y - 30));
+        neighbors.add(new Point(center.x + 18, center.y - 30));
+        neighbors.add(new Point(center.x - 36, center.y));
+        neighbors.add(new Point(center.x + 36, center.y));
+        neighbors.add(new Point(center.x - 18, center.y + 30));
+        neighbors.add(new Point(center.x + 18, center.y + 30));
+        return neighbors;
     }
 
-    public boolean isReachable(Point p, List<Point> points) {
-        List<Point> pointsNearby = returnHexagonPoints(p, points);
-
-        if (!this.pointStatusMap.get(p).equals("empty")) {
+    public boolean isReachable(Point center) {
+        List<Point> neighbors = findNeighbors(center);
+        if (!this.pointStatusMap.get(center).equals("empty")) {
             return false;
         }
-        for (Point point : pointsNearby) {
-            if (this.pointStatusMap.get(point).equals("empty")) {
-                return true;
+        for (int i = 0; i < 6; i++) {
+            if (this.flagPoints.contains(neighbors.get(i))) {
+                if (this.pointStatusMap.get(neighbors.get(i)).equals("empty")) {
+                    return true;
+                }
             }
         }
         return false;
@@ -92,6 +96,7 @@ public class PointPanel extends JPanel{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         paintPoints(g);
+        paintReachableFlags(g);
     }
         
 }

@@ -11,6 +11,11 @@ public class HexagonPanel extends JPanel{
     private int size = 20; // size of the small hexagons
     private int padding = 16; // space between hexagons
     private Color hexColor;
+    private char casePaint = 'a';
+    private int centerX;
+    private int centerY;
+    private int polygonX ;
+    private int polygonY ;
     public HexagonPanel(){
         hexColor = Color.BLACK;
         setOpaque(false);
@@ -53,19 +58,35 @@ public class HexagonPanel extends JPanel{
     }
 
     public void paintAllgrid(int x , int y){
+        this.centerX = x;
+        this.centerY = y;
+        repaint();
+    }
+
+    public void paintOnegrid(int x, int y){
+        this.polygonX = x;
+        this.polygonY = y;
+        casePaint = 'b';
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g){
+        System.out.println("paintComponent");
         super.paintComponent(g);
-        // paint the hexagons
-        List<Point> points = returnAllgrid(300, 300);
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(this.hexColor);
         g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+        // paint the hexagons
+        List<Point> points = returnAllgrid(this.centerX, this.centerY);  
         for (Point point : points ) {
             Polygon hexagon = generateHexagon(point.x, point.y, size);
+            g.drawPolygon(hexagon);
+        }
+        if (casePaint == 'b'){
+            // paint the hexagon
+            Polygon hexagon = generateHexagon(this.polygonX, this.polygonY, size);
+            g.setColor(Color.RED);
             g.drawPolygon(hexagon);
         }
     }
