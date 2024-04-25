@@ -7,11 +7,13 @@ import java.util.List;
 import javax.swing.*;
 
 
-public class HexagonGrid extends JPanel{
+public class HexagonPanel extends JPanel{
     private int size = 20; // size of the small hexagons
     private int padding = 16; // space between hexagons
-    public HexagonGrid(){
-        super();
+    private Color hexColor;
+    public HexagonPanel(){
+        hexColor = Color.BLACK;
+        setOpaque(false);
     }
 
     public Polygon generateHexagon(int centerX, int centerY, int size){
@@ -43,13 +45,6 @@ public class HexagonGrid extends JPanel{
         return points;
     }
     
-    public void paintPolygon(Graphics g, Polygon p, Color c){
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(c);
-        g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
-        g.drawPolygon(p);
-    }
 
     public void fillPolygon(Graphics g, Polygon p, Color c){
         super.paintComponent(g);
@@ -57,10 +52,21 @@ public class HexagonGrid extends JPanel{
         g.fillPolygon(p);
     }
 
-    public void paintAllgrid(Graphics g, List<Point> points){
-        for (Point point : points){
+    public void paintAllgrid(int x , int y){
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g){
+        super.paintComponent(g);
+        // paint the hexagons
+        List<Point> points = returnAllgrid(300, 300);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(this.hexColor);
+        g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+        for (Point point : points ) {
             Polygon hexagon = generateHexagon(point.x, point.y, size);
-            paintPolygon(g, hexagon, Color.BLACK);
+            g.drawPolygon(hexagon);
         }
     }
 

@@ -1,22 +1,29 @@
 package chess_board;
 import java.awt.*;
+import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;  
 
-public class Flags {
+public class PointPanel extends JPanel{
     private List<Point> flagPoints;
     private int padding = 16;
     // Map the status of each point
     private Map<Point, String> pointStatusMap;
 
-    public Flags(List<Point> flagPoints) {
+    public PointPanel(List<Point> flagPoints) {
+        setOpaque(false); // 保证面板透明
         this.flagPoints = flagPoints;
         this.pointStatusMap = new HashMap<>();
         for (Point p : flagPoints) {
             this.pointStatusMap.put(p, "empty");
         }
     }
+    
+    public void paintOnpanel(){
+        repaint();
+    }
+
     // Paint the flags
     public void paintPoints(Graphics g) {
         for (Point p : this.flagPoints) {
@@ -79,6 +86,12 @@ public class Flags {
             }
         }
         return false;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        paintPoints(g);
     }
         
 }

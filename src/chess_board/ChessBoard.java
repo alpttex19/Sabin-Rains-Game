@@ -12,9 +12,12 @@ class ChessBoard extends JFrame{
     private int mouseX = -1;
     private int mouseY = -1;
     private JLabel countTxt;
-    private HexagonGrid hexagonGrid;
+    private LayeredPane layeredPane;
+    private HexagonPanel preDrawnHexPanel;
+    private PointPanel pointsPanel;
+    private ImagePanel imagePanel;
+
     private List<Point> points;
-    private Flags flags;
 
     public ChessBoard(){
         super();
@@ -23,42 +26,11 @@ class ChessBoard extends JFrame{
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        GridPanel backgdPanel = new GridPanel();
-        backgdPanel.setLayout(null);
-        countTxt = new JLabel();
-        countTxt.setFont(new Font("Arial", Font.BOLD, 20));
-        countTxt.setText("Chess Board");
-        countTxt.setBounds(250, 100, 300, 50);
-        backgdPanel.add(countTxt);
+        layeredPane = new LayeredPane();
+        layeredPane.setPreferredSize(new Dimension(width, height));
+        add(layeredPane);
 
-        hexagonGrid = new HexagonGrid();
-        backgdPanel.add(hexagonGrid);
-        add(backgdPanel);
-        // remember the all coordinates of the small hexagons
-        points = hexagonGrid.returnAllgrid(300, 300);
-        flags = new Flags(points);
-
-        addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) { // Check if left button clicked
-                    mouseX = e.getX();
-                    mouseY = e.getY();
-                    System.out.print("the first point is: ");
-                    System.out.println(points.get(0));
-                    for (Point p : points) {
-                        double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
-                        if (distance < 8) {
-                            System.out.print("the clicked point is: ");
-                            System.out.println(p);
-                            flags.setPointStatus(p, "red");
-                            repaint();
-                            break;
-                        }
-                    }
-                }
-            }
-        });
-
+        setVisible(true);
         /* 
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent e) {
@@ -75,18 +47,56 @@ class ChessBoard extends JFrame{
             }
         });
         */
-        setVisible(true);
     }
     
+    private class LayeredPane extends JLayeredPane {
+        public LayeredPane() {
+            imagePanel = new ImagePanel();
+            imagePanel.setBounds(0, 0, width, height);
+            this.add(imagePanel, JLayeredPane.DEFAULT_LAYER);
 
+            preDrawnHexPanel = new HexagonPanel();
+            preDrawnHexPanel.setBounds(0, 0, width, height);
+            preDrawnHexPanel.paintAllgrid(300, 300);
+            this.add(preDrawnHexPanel, JLayeredPane.PALETTE_LAYER);
+
+
+            points = preDrawnHexPanel.returnAllgrid(300, 300);
+            pointsPanel = new PointPanel(points);
+            pointsPanel.setBounds(0, 0, width, height);
+            this.add(pointsPanel, JLayeredPane.MODAL_LAYER);
+
+            addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON1) { // Check if left button clicked
+                        mouseX = e.getX();
+                        mouseY = e.getY();
+                        System.out.print("the first point is: ");
+                        System.out.println(points.get(0));
+                        for (Point p : points) {
+                            double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
+                            if (distance < 8) {
+                                System.out.print("the clicked point is: ");
+                                System.out.println(p);
+                                pointsPanel.setPointStatus(p, "red");
+                                repaint();
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    /* 
     public void paint(Graphics g) {
         super.paint(g);
-        flags.paintPoints(g);
-        // if (mouseX != -1 && mouseY != -1) {
-        //     Polygon polygonA = hexagonGrid.generateHexagon(mouseX, mouseY, 20);
-        //     hexagonGrid.paintPolygon(g, polygonA, Color.RED);
-        // }
+        if (mouseX != -1 && mouseY != -1) {
+            Polygon polygonA = hexagonGrid.generateHexagon(mouseX, mouseY, 20);
+            hexagonGrid.paintPolygon(g, polygonA, Color.RED);
+        }
     }
+    */
 
     private void drawHexagon(Graphics g, int x, int y, int size) {
         Polygon hexagon = new Polygon();
