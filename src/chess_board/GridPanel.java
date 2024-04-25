@@ -23,6 +23,7 @@ class GridPanel extends JPanel {
         } catch(IOException e1){}  
         HexagonGrid hexagonGrid = new HexagonGrid();
         points = hexagonGrid.returnAllgrid(300, 300);
+        System.out.println(points.get(0));
         hexagonGrid.paintAllgrid(g, points);
     }
 }

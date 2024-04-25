@@ -6,7 +6,7 @@ import java.util.List;
 
 
 // Create a new chess board
-class chess_board extends JFrame{
+class ChessBoard extends JFrame{
     private int width = 600;
     private int height = 600;
     private int mouseX = -1;
@@ -14,8 +14,9 @@ class chess_board extends JFrame{
     private JLabel countTxt;
     private HexagonGrid hexagonGrid;
     private List<Point> points;
+    private Flags flags;
 
-    public chess_board(){
+    public ChessBoard(){
         super();
         // Set the size of the chess board
         setSize(width, height);
@@ -35,9 +36,30 @@ class chess_board extends JFrame{
         add(backgdPanel);
         // remember the all coordinates of the small hexagons
         points = hexagonGrid.returnAllgrid(300, 300);
+        flags = new Flags(points);
 
-        setVisible(true);
-        
+        addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) { // Check if left button clicked
+                    mouseX = e.getX();
+                    mouseY = e.getY();
+                    System.out.print("the first point is: ");
+                    System.out.println(points.get(0));
+                    for (Point p : points) {
+                        double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
+                        if (distance < 8) {
+                            System.out.print("the clicked point is: ");
+                            System.out.println(p);
+                            flags.setPointStatus(p, "red");
+                            repaint();
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+        /* 
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent e) {
                 mouseX = e.getX();
@@ -52,14 +74,18 @@ class chess_board extends JFrame{
                 }
             }
         });
+        */
+        setVisible(true);
     }
+    
 
     public void paint(Graphics g) {
         super.paint(g);
-        if (mouseX != -1 && mouseY != -1) {
-            Polygon polygonA = hexagonGrid.generateHexagon(mouseX, mouseY, 20);
-            hexagonGrid.paintPolygon(g, polygonA, Color.RED);
-        }
+        flags.paintPoints(g);
+        // if (mouseX != -1 && mouseY != -1) {
+        //     Polygon polygonA = hexagonGrid.generateHexagon(mouseX, mouseY, 20);
+        //     hexagonGrid.paintPolygon(g, polygonA, Color.RED);
+        // }
     }
 
     private void drawHexagon(Graphics g, int x, int y, int size) {
@@ -83,6 +109,6 @@ class chess_board extends JFrame{
     // Create a new chess board
     public static void main(String[] args) {
         // Create a new chess board
-        chess_board app = new chess_board();
+        ChessBoard app = new ChessBoard();
     }
 }
