@@ -3,21 +3,24 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
 
 
 // Create a new chess board
 class ChessBoard extends JFrame{
     private int width = 600;
     private int height = 600;
-    private int mouseX = -1;
-    private int mouseY = -1;
+    private int click_mouseX = -1;
+    private int click_mouseY = -1;
     //private JLabel countTxt;
     private LayeredPane layeredPane;
     private HexagonPanel preDrawnHexPanel;
     private PointPanel pointsPanel;
     private ImagePanel imagePanel;
+    private ActivePanel activePanel;
 
     private List<Point> points;
+    private Map<Point, String> pointStatusMap;
 
     public ChessBoard(){
         super();
@@ -40,33 +43,35 @@ class ChessBoard extends JFrame{
 
             preDrawnHexPanel = new HexagonPanel();
             preDrawnHexPanel.setBounds(0, 0, width, height);
-            preDrawnHexPanel.paintAllgrid(300, 300);
+            // preDrawnHexPanel.repaint();
             this.add(preDrawnHexPanel, JLayeredPane.PALETTE_LAYER);
 
 
-            points = preDrawnHexPanel.returnAllgrid(300, 300);
-            for (Point p : points) {
-                System.out.print(p);
-            }
+            points = preDrawnHexPanel.getAllpoints(300, 300);
             pointsPanel = new PointPanel(points);
             pointsPanel.setBounds(0, 0, width, height);
             this.add(pointsPanel, JLayeredPane.MODAL_LAYER);
+
+            pointStatusMap = pointsPanel.getPointStatusMap();
+            activePanel = new ActivePanel(pointStatusMap);
+            activePanel.setBounds(0, 0, width, height);
+            this.add(activePanel, JLayeredPane.POPUP_LAYER);
 
             addMouseListener(new MouseAdapter() {
                 String pointColor = "red";
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) { // Check if left button clicked
-                        mouseX = e.getX();
-                        mouseY = e.getY();
+                        click_mouseX = e.getX();
+                        click_mouseY = e.getY();
                         for (Point p : points) {
-                            double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
-                            if (distance < 15 && (pointsPanel.getPointStatus(p).equals("empty"))) {
+                            double distance = Math.hypot(click_mouseX - p.x, click_mouseY - p.y);
+                            if (distance < 15 && (pointsPanel.getPointStatus(p).equals("can_be_reach"))) {
                                 pointsPanel.setPointStatus(p, pointColor);
                                 pointColor = pointColor.equals("red") ? "blue" : "red";
-                                repaint();
                                 break;
                             }
                         }
+                        pointsPanel.repaint();
                     }
                 }
             });
@@ -75,12 +80,12 @@ class ChessBoard extends JFrame{
                 int lastX = -1;
                 int lastY = -1;
                 public void mouseMoved(MouseEvent e) {
-                    mouseX = e.getX();
-                    mouseY = e.getY();
+                    click_mouseX = e.getX();
+                    click_mouseY = e.getY();
                     for (Point p : points) {
-                        double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
+                        double distance = Math.hypot(click_mouseX - p.x, click_mouseY - p.y);
                         if (distance < 15 && (p.x != lastX || lastY != p.y)) {
-                            preDrawnHexPanel.paintOnegrid(p.x, p.y);
+                            // preDrawnHexPanel.paintOnegrid(p.x, p.y);
                             lastX = p.x;
                             lastY = p.y;
                             break;
@@ -113,7 +118,7 @@ class ChessBoard extends JFrame{
     public void GenerateGrid(){
         
     }
-    // 监听鼠标位置，在对应位置画出六边形
+    // listen to the mouse click event
     
     public void create(){
         System.out.println("began to create chess board");
