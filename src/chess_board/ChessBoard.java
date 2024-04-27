@@ -20,7 +20,7 @@ class ChessBoard extends JFrame{
     private ActivePanel activePanel;
 
     private List<Point> points;
-    private Map<Point, String> pointStatusMap;
+    private Map<Point, StringPair> pointStatusMap;
 
     public ChessBoard(){
         super();
@@ -66,7 +66,8 @@ class ChessBoard extends JFrame{
                         for (Point p : points) {
                             double distance = Math.hypot(click_mouseX - p.x, click_mouseY - p.y);
                             if (distance < 15 && (pointsPanel.getPointStatus(p).equals("can_be_reach"))) {
-                                pointsPanel.setPointStatus(p, pointColor);
+                                StringPair status = new StringPair(pointColor, "can_be_invert");
+                                pointsPanel.setPointStatus(p, status);
                                 pointColor = pointColor.equals("red") ? "blue" : "red";
                                 break;
                             }

@@ -9,15 +9,15 @@ import java.util.HashMap;
 public class PointPanel extends JPanel{
     private List<Point> flagPoints;
     // Map the status of each point
-    private Map<Point, String> pointStatusMap;
+    private Map<Point, StringPair> pointStatusMap;
 
     public PointPanel(List<Point> flagPoints) {
         setOpaque(false); // 保证面板透明
         this.flagPoints = flagPoints;
         this.pointStatusMap = new HashMap<>();
-        //red, blue || can_be_reach, locked
+        //empty, red, blue || can_be_reach, locked, can_be_invert, ready_to_reach
         for (Point p : flagPoints) {
-            this.pointStatusMap.put(p, "can_be_reach");
+            this.pointStatusMap.put(p, new StringPair("empty", "can_be_reach"));
         }
     }
     
@@ -28,20 +28,20 @@ public class PointPanel extends JPanel{
     // Paint the flags
     public void paintPoints(Graphics g) {
         for (Point p : this.flagPoints) {
-            String status = this.pointStatusMap.get(p);          
-            if (status.equals("can_be_reach")) {
+            StringPair status = this.pointStatusMap.get(p);          
+            if (status.matches("empty","can_be_reach")) {
                 g.setColor(Color.GREEN);
                 g.fillOval(p.x - 2, p.y - 2, 4, 4);
             }
-            else if (status.equals("locked")) {
+            else if (status.matches("empty","locked")) {
             }  
             else { }
 
-            if (status.equals("red")) {
+            if (status.matches("red", "can_be_invert")) {
                 g.setColor(Color.RED);
                 g.fillOval(p.x - 13, p.y - 13, 26, 26);
             }
-            else if (status.equals("blue")) {
+            else if (status.matches("blue", "can_be_invert")) {
                 g.setColor(Color.BLUE);
                 g.fillOval(p.x - 13, p.y - 13, 26, 26);
             } 
@@ -59,7 +59,7 @@ public class PointPanel extends JPanel{
     }
 
     // Set the status of the point
-    public void setPointStatus(Point point, String status) {
+    public void setPointStatus(Point point, StringPair status) {
         System.out.print(point);
         System.out.println(status);
         this.pointStatusMap.put(point, status);
@@ -71,11 +71,11 @@ public class PointPanel extends JPanel{
     }
 
     // Get the status of the point
-    public String getPointStatus(Point point) {
+    public StringPair getPointStatus(Point point) {
         return this.pointStatusMap.get(point);
     }
 
-    public Map<Point, String> getPointStatusMap() {
+    public Map<Point, StringPair> getPointStatusMap() {
         return this.pointStatusMap;
     }
 
@@ -99,11 +99,11 @@ public class PointPanel extends JPanel{
 
     public boolean isReachable(Point center) {
         List<Point> neighbors = findNeighbors(center);
-        if (!this.pointStatusMap.get(center).equals("can_be_reach")) {
+        if (!this.pointStatusMap.get(center).matches1st("empty")) {
             return false;
         }
         for (Point p : neighbors) {
-            if (this.pointStatusMap.get(p).equals("can_be_reach")) {
+            if (this.pointStatusMap.get(p).matches1st("empty")) {
                 return true;
             }
         }
