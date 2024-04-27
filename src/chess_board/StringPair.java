@@ -8,6 +8,9 @@ public class StringPair {
             this.first = first;
             this.second = second;
         }
+        public void printPair(){
+            System.out.println(this.first + " " + this.second);
+        }
 
         public boolean matches(String a, String b) {
             return this.first.equals(a) && this.second.equals(b);
@@ -19,6 +22,14 @@ public class StringPair {
 
         public boolean matches2nd(String b) {
             return this.second.equals(b);
+        }
+
+        public String getFirst() {
+            return this.first;
+        }
+
+        public String getSecond() {
+            return this.second;
         }
     
 }

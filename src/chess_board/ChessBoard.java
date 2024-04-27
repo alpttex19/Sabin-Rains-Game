@@ -10,9 +10,6 @@ import java.util.Map;
 class ChessBoard extends JFrame{
     private int width = 600;
     private int height = 600;
-    private int click_mouseX = -1;
-    private int click_mouseY = -1;
-    //private JLabel countTxt;
     private LayeredPane layeredPane;
     private HexagonPanel preDrawnHexPanel;
     private PointPanel pointsPanel;
@@ -21,6 +18,9 @@ class ChessBoard extends JFrame{
 
     private List<Point> points;
     private Map<Point, StringPair> pointStatusMap;
+    private List<Point> invertedPoints;
+
+    String pointColor = "red";
 
     public ChessBoard(){
         super();
@@ -53,26 +53,33 @@ class ChessBoard extends JFrame{
             this.add(pointsPanel, JLayeredPane.MODAL_LAYER);
 
             pointStatusMap = pointsPanel.getPointStatusMap();
-            activePanel = new ActivePanel(pointStatusMap);
+            activePanel = new ActivePanel(pointStatusMap, points);
             activePanel.setBounds(0, 0, width, height);
             this.add(activePanel, JLayeredPane.POPUP_LAYER);
 
             addMouseListener(new MouseAdapter() {
-                String pointColor = "red";
+                int click_mouseX;
+                int click_mouseY;
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) { // Check if left button clicked
                         click_mouseX = e.getX();
                         click_mouseY = e.getY();
                         for (Point p : points) {
                             double distance = Math.hypot(click_mouseX - p.x, click_mouseY - p.y);
-                            if (distance < 15 && (pointsPanel.getPointStatus(p).equals("can_be_reach"))) {
-                                StringPair status = new StringPair(pointColor, "can_be_invert");
+                            if (distance < 15 && (pointsPanel.getPointStatus(p).matches2nd("can_be_reach"))) {
+                                StringPair status = new StringPair(pointColor, "can_not_reach");
                                 pointsPanel.setPointStatus(p, status);
+                                for (Point point : invertedPoints) {
+                                    pointsPanel.setPointStatus(point, status);
+                                }
+                                pointStatusMap = pointsPanel.getPointStatusMap();
+                                activePanel.setStatusMap(pointStatusMap);
                                 pointColor = pointColor.equals("red") ? "blue" : "red";
+                                
+                                pointsPanel.repaint();
                                 break;
                             }
                         }
-                        pointsPanel.repaint();
                     }
                 }
             });
@@ -80,15 +87,19 @@ class ChessBoard extends JFrame{
             addMouseMotionListener(new MouseMotionAdapter() {
                 int lastX = -1;
                 int lastY = -1;
+                int mouseX;
+                int mouseY;
                 public void mouseMoved(MouseEvent e) {
-                    click_mouseX = e.getX();
-                    click_mouseY = e.getY();
+                    mouseX = e.getX();
+                    mouseY = e.getY();
                     for (Point p : points) {
-                        double distance = Math.hypot(click_mouseX - p.x, click_mouseY - p.y);
+                        double distance = Math.hypot(mouseX - p.x, mouseY - p.y);
                         if (distance < 15 && (p.x != lastX || lastY != p.y)) {
-                            // preDrawnHexPanel.paintOnegrid(p.x, p.y);
+                            activePanel.paintHexagons(preDrawnHexPanel, pointsPanel, p.x, p.y, pointColor);
                             lastX = p.x;
                             lastY = p.y;
+                            invertedPoints = activePanel.canInvertpoint();
+                            activePanel.repaint();
                             break;
                         }
                     }
@@ -97,34 +108,7 @@ class ChessBoard extends JFrame{
             
         }
     }
-    /* 
-    public void paint(Graphics g) {
-        super.paint(g);
-        if (mouseX != -1 && mouseY != -1) {
-            Polygon polygonA = hexagonGrid.generateHexagon(mouseX, mouseY, 20);
-            hexagonGrid.paintPolygon(g, polygonA, Color.RED);
-        }
-    }
-    
-    private void drawHexagon(Graphics g, int x, int y, int size) {
-        Polygon hexagon = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            hexagon.addPoint((int) (x + size * Math.cos(i * Math.PI / 3)),
-                             (int) (y + size * Math.sin(i * Math.PI / 3)));
-        }
-        g.drawPolygon(hexagon);
-    }
-    */
 
-    public void GenerateGrid(){
-        
-    }
-    // listen to the mouse click event
-    
-    public void create(){
-        System.out.println("began to create chess board");
-
-    }
     // Create a new chess board
     public static void main(String[] args) {
         // Create a new chess board
