@@ -1,6 +1,5 @@
 package chess_board;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;

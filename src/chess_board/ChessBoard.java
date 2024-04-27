@@ -48,7 +48,7 @@ class ChessBoard extends JFrame{
 
 
             points = preDrawnHexPanel.getAllpoints(300, 300);
-            pointsPanel = new PointPanel(points);
+            pointsPanel = new PointPanel(points, preDrawnHexPanel);
             pointsPanel.setBounds(0, 0, width, height);
             this.add(pointsPanel, JLayeredPane.MODAL_LAYER);
 
@@ -66,16 +66,14 @@ class ChessBoard extends JFrame{
                         click_mouseY = e.getY();
                         for (Point p : points) {
                             double distance = Math.hypot(click_mouseX - p.x, click_mouseY - p.y);
-                            if (distance < 15 && (pointsPanel.getPointStatus(p).matches2nd("can_be_reach"))) {
+                            if (distance < 17 && (pointsPanel.getPointStatus(p).matches2nd("can_be_reach"))) {
                                 StringPair status = new StringPair(pointColor, "can_not_reach");
-                                pointsPanel.setPointStatus(p, status);
-                                for (Point point : invertedPoints) {
-                                    pointsPanel.setPointStatus(point, status);
-                                }
-                                pointStatusMap = pointsPanel.getPointStatusMap();
-                                activePanel.setStatusMap(pointStatusMap);
-                                pointColor = pointColor.equals("red") ? "blue" : "red";
-                                
+                                pointsPanel.setPointStatus(p, status, invertedPoints);
+                                // for (Point point : invertedPoints) {
+                                //     pointsPanel.setPointStatus(point, status);
+                                // }
+                                activePanel.setStatusMap(pointsPanel.getPointStatusMap());
+                                pointColor = pointColor.equals("red") ? "blue" : "red";      
                                 pointsPanel.repaint();
                                 break;
                             }

@@ -4,13 +4,11 @@ import java.util.Map;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.swing.*;
 
 public class ActivePanel extends JPanel{
     private Map<Point, StringPair> pointStatusMap;
-    private List<Point> flagPoints;
     private HexagonPanel hexPanel;
     private PointPanel pointPanel;
     private String pointColor;
@@ -20,7 +18,6 @@ public class ActivePanel extends JPanel{
     public ActivePanel(Map<Point, StringPair> pointStatusMap, List<Point> flagPoints) {
         setOpaque(false);
         this.pointStatusMap = pointStatusMap;
-        this.flagPoints = flagPoints;
     }
 
     public void setStatusMap(Map<Point, StringPair> pointStatusMap) {
@@ -105,12 +102,13 @@ public class ActivePanel extends JPanel{
         return poss_to_invert; 
     }
 
-    public void paintReaction(Graphics g){
+    public void paintReaction(Graphics g2){
+        Graphics2D g = (Graphics2D) g2;
+        g.setStroke(new BasicStroke(3)); // Set the line thickness to 3
         if (this.mouseOnX == -1 || this.mouseOnY == -1) {
             return;
         }
         StringPair mouseOnStatus = this.pointStatusMap.get(new Point(this.mouseOnX, this.mouseOnY));
-        mouseOnStatus.printPair();
         if (mouseOnStatus.matches("empty", "can_be_reach")) {
             Polygon hexagon = this.hexPanel.generateHexagon(this.mouseOnX, this.mouseOnY);
             g.setColor(Color.RED);

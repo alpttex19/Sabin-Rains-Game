@@ -2,38 +2,38 @@ package chess_board;
 import java.awt.*;
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;  
 
 public class PointPanel extends JPanel{
     private List<Point> flagPoints;
-    private List <Point> invertedPoints;
     // Map the status of each point
     private Map<Point, StringPair> pointStatusMap;
-    private HexagonPanel hexPanel = new HexagonPanel();
+    private HexagonPanel hexPanel;
+    private Color nextColor = Color.RED;
+    private int redPoints;
+    private int bluePoints;
 
-    public PointPanel(List<Point> flagPoints) {
+    public PointPanel(List<Point> flagPoints, HexagonPanel hexPanel) {
         setOpaque(false); // 保证面板透明
         this.flagPoints = flagPoints;
+        this.hexPanel = hexPanel;
         this.pointStatusMap = new HashMap<>();
-        //empty, red, blue || can_be_reach,can_not_reach, locked, can_be_invert
+        //empty, red, blue || can_be_reach,can_not_reach, locked
         for (Point p : flagPoints) {
             this.pointStatusMap.put(p, new StringPair("empty", "can_be_reach"));
         }
     }
     
-    public void paintOnpanel(){
-        repaint();
-    }
 
     // Paint the flags
     public void paintPoints(Graphics g) {
         for (Point p : this.flagPoints) {
             StringPair status = this.pointStatusMap.get(p);
             if (status.matches2nd("locked")){
-                g.setColor(Color.GRAY);
+                Color semiTransparentGray = new Color(128, 128, 128, 170);
+                g.setColor(semiTransparentGray);
                 Polygon hexagon = hexPanel.generateHexagon(p.x, p.y);
                 g.fillPolygon(hexagon);
             }
@@ -53,19 +53,37 @@ public class PointPanel extends JPanel{
             } 
             else { }
         }
+        // on the right top corner, show the next color
+        g.setColor(nextColor);
+        g.fillOval(400, 80, 26, 26);
+
+        // on the right top show the number of red and blue points
+        g.setColor(Color.BLACK);
+        g.drawString("Red: " + redPoints, 300, 80);
+        g.drawString("Blue: " + bluePoints, 300, 120);
     }
 
     // Set the status of the point
-    public void setPointStatus(Point centerPoint, StringPair status) {
-        //this.invertedPoints = invertedPoints;
+    public void setPointStatus(Point centerPoint, StringPair status, List<Point> invertedPoints) {
         List<Point> lockedPoints = new ArrayList<>(this.flagPoints);
         List<Point> neiNeighbourPoints = new ArrayList<>();
         this.pointStatusMap.put(centerPoint, status);
+        // check if the game is over
+        boolean gameOver = true;
+        this.redPoints = 0;
+        this.bluePoints = 0;
+        // invert the points
+        for (Point p : invertedPoints) {
+            this.pointStatusMap.put(p, status);
+        }
+        // show the next color on the right top corner
+        this.nextColor = status.getFirst().equals("red") ? Color.BLUE : Color.RED;
         // find the reachable points
         for (Point p : this.flagPoints) {
             if (isReachable(p)) {
                 StringPair currentStatus = new StringPair("empty", "can_be_reach");
                 this.pointStatusMap.put(p, currentStatus);
+                gameOver = false;
             }
             else {
                 StringPair currentStatus = this.pointStatusMap.get(p);
@@ -74,6 +92,16 @@ public class PointPanel extends JPanel{
                     this.pointStatusMap.put(p, newStatus);
                 }
             }
+            if ( this.pointStatusMap.get(p).getFirst() == "red"){
+                this.redPoints += 1;
+            }
+            else if (this.pointStatusMap.get(p).getFirst() == "blue"){
+                this.bluePoints += 1;
+            }
+        }
+        if (gameOver) {
+            // pop up a new gui to show the result
+            JOptionPane.showMessageDialog(null, "WINNER:"+ (this.redPoints > this.bluePoints ? "RED" : "BLUE") + " WIN!", "GAME OVER", JOptionPane.INFORMATION_MESSAGE);
         }
 
         // find the locked points
@@ -97,13 +125,9 @@ public class PointPanel extends JPanel{
             this.pointStatusMap.put(p, newStatus);
         }
 
-        // change the state of the inverted points
-        // for (Point p : invertedPoints) {
-        //     StringPair currentStatus = this.pointStatusMap.get(p);
-        //     String newColor = currentStatus.getFirst().equals("red") ? "blue" : "red";
-        //     StringPair newStatus = new StringPair(newColor, currentStatus.getSecond());
-        //     this.pointStatusMap.put(p, newStatus);
-        // }
+        // check if the game is over
+        
+
     }
 
     // Get the status of the point
