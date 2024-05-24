@@ -61,7 +61,8 @@ public class ActivePanel extends JPanel{
         if (!this.pointStatusMap.get(centerPoint).matches("empty", "can_be_reach")) {
             return poss_to_invert;
         }
-        String anothorColor = this.pointColor.equals("red") ? "blue" : "red";
+        String thisColor = this.pointColor;
+        String anothorColor = thisColor.equals("red") ? "blue" : "red";
         // find the points that can be inverted
         List<Point> pointsNeighbour = pointPanel.findNeighbors(centerPoint);
         for (Point pN : pointsNeighbour) {
@@ -72,6 +73,14 @@ public class ActivePanel extends JPanel{
                 StringPair status = this.pointStatusMap.get(pNn);
                 if (status.matches1st(anothorColor)) {
                     clockList.add(pNn);
+                    if (clockList.size() == 5) {
+                        poss_to_invert.addAll(clockList);
+                        break;
+                    }
+                }
+                else if (status.matches1st(thisColor)) {
+                    poss_to_invert.addAll(clockList);
+                    break;
                 }
                 else if (status.matches1st("empty")) {
                     clockList.clear();
@@ -81,13 +90,21 @@ public class ActivePanel extends JPanel{
                     break;
                 }
             }
-            poss_to_invert.addAll(clockList);
+            
             List<Point> interclockList = new ArrayList<>();
             for (int i = pNneighbours.size() - 1; i >= 0; i--) {
                 Point pNn = pNneighbours.get(i);
                 StringPair status = this.pointStatusMap.get(pNn);
                 if (status.matches1st(anothorColor)) {
                     interclockList.add(pNn);
+                    if (interclockList.size() == 5) {
+                        poss_to_invert.addAll(interclockList);
+                        break;
+                    }
+                }
+                else if (status.matches1st(thisColor)) {
+                    poss_to_invert.addAll(interclockList);
+                    break;
                 }
                 else if (status.matches1st("empty")) {
                     interclockList.clear();
@@ -97,7 +114,6 @@ public class ActivePanel extends JPanel{
                     break;
                 }
             }
-            poss_to_invert.addAll(interclockList); 
         }
         return poss_to_invert; 
     }
