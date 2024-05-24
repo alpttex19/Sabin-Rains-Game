@@ -1,10 +1,6 @@
 package chess_board;
 import java.awt.*;
 import javax.swing.*;
-import javax.imageio.ImageIO;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 class ImagePanel extends JPanel {
