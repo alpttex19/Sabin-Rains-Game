@@ -62,7 +62,8 @@ public class PointPanel extends JPanel{
 
         // on the right top show the number of red and blue points
         g.setColor(Color.BLACK);
-        g.drawString("Red: " + redPoints, 300, 80);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Red: " + redPoints, 200, 120);
         g.drawString("Blue: " + bluePoints, 300, 120);
     }
 
@@ -76,8 +77,10 @@ public class PointPanel extends JPanel{
         this.redPoints = 0;
         this.bluePoints = 0;
         // invert the points
-        for (Point p : invertedPoints) {
-            this.pointStatusMap.put(p, status);
+        if (invertedPoints != null) {
+            for (Point p : invertedPoints) {
+                this.pointStatusMap.put(p, status);
+            }
         }
         // show the next color on the right top corner
         this.nextColor = status.getFirst().equals("red") ? Color.BLUE : Color.RED;
