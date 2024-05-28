@@ -1,13 +1,16 @@
-package chess_board;
+package sabin_rains;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import sabin_rains.*;
+
 import java.util.List;
 import java.util.Map;
 
 
 // Create a new chess board
-class ChessBoard extends JFrame{
+class MainClass extends JFrame{
     private int width = 600;
     private int height = 600;
     private LayeredPane layeredPane;
@@ -22,7 +25,7 @@ class ChessBoard extends JFrame{
 
     String pointColor = "red";
 
-    public ChessBoard(){
+    public MainClass(){
         super();
         // Set the size of the chess board
         setSize(width, height);
@@ -110,6 +113,6 @@ class ChessBoard extends JFrame{
     // Create a new chess board
     public static void main(String[] args) {
         // Create a new chess board
-        new ChessBoard();
+        new MainClass();
     }
 }

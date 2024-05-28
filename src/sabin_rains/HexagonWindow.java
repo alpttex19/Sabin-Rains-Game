@@ -1,5 +1,8 @@
-package chess_board;
+package sabin_rains;
 import javax.swing.*;
+
+import sabin_rains.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;

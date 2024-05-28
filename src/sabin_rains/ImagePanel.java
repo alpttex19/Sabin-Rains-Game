@@ -1,21 +1,24 @@
-package chess_board;
+package sabin_rains;
 import java.awt.*;
 import javax.swing.*;
 
+import sabin_rains.*;
+
 
 class ImagePanel extends JPanel {
-    private Image image;
+    private ImageIcon image;
 
     public ImagePanel() {
         // 加载图像
-        image = new ImageIcon("src/sources/backgroud.jpg").getImage();
+        java.net.URL imgURL = getClass().getResource("/sources/backgroud.jpg");
+        image = new ImageIcon(imgURL);
     }
     
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (image != null) {
-            g.drawImage(image, 0, 0, this);
+            g.drawImage(image.getImage(), 0, 0, this);
         }
     }
 }

@@ -1,4 +1,5 @@
-package chess_board;
+package sabin_rains;
+import sabin_rains.*;
 
 public class StringPair {
         private String first;

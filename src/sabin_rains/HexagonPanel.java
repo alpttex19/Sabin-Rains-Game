@@ -1,9 +1,11 @@
-package chess_board;
+package sabin_rains;
 import java.awt.*;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+
+import sabin_rains.*;
 
 
 public class HexagonPanel extends JPanel{

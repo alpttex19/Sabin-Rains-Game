@@ -1,4 +1,4 @@
-package chess_board;
+package sabin_rains;
 import java.awt.*;
 import java.util.Map;
 import java.util.Comparator;
@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 import javax.swing.*;
+
+import sabin_rains.*;
 
 public class ActivePanel extends JPanel{
     private Map<Point, StringPair> pointStatusMap;

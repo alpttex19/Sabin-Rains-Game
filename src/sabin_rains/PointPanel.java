@@ -1,6 +1,9 @@
-package chess_board;
+package sabin_rains;
 import java.awt.*;
 import javax.swing.*;
+
+import sabin_rains.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
