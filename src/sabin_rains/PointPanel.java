@@ -9,6 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;  
 
+/* 
+ * PointPanel类，用于绘制点
+ * 主要功能：
+ * 1. 绘制点
+ * 2. 设置点的状态: empty, red, blue || can_be_reach,can_not_reach, locked
+ * 3. 获取点的状态
+ * 4. 获取点的状态映射
+ * 5. 判断点是否可达
+ * 
+ */
+
 public class PointPanel extends JPanel{
     private List<Point> flagPoints;
     // Map the status of each point
@@ -17,7 +28,8 @@ public class PointPanel extends JPanel{
     private Color nextColor = Color.RED;
     private int redPoints;
     private int bluePoints;
-
+    private boolean gameOver = false;
+    // 构造函数
     public PointPanel(List<Point> flagPoints, HexagonPanel hexPanel) {
         setOpaque(false); // 保证面板透明
         this.flagPoints = flagPoints;
@@ -30,7 +42,7 @@ public class PointPanel extends JPanel{
     }
     
 
-    // Paint the flags
+    // 绘制点
     public void paintPoints(Graphics g) {
         for (Point p : this.flagPoints) {
             StringPair status = this.pointStatusMap.get(p);
@@ -67,29 +79,29 @@ public class PointPanel extends JPanel{
         g.drawString("Blue: " + bluePoints, 300, 120);
     }
 
-    // Set the status of the point
+    // 设置点的状态
     public void setPointStatus(Point centerPoint, StringPair status, List<Point> invertedPoints) {
         List<Point> lockedPoints = new ArrayList<>(this.flagPoints);
         List<Point> neiNeighbourPoints = new ArrayList<>();
         this.pointStatusMap.put(centerPoint, status);
-        // check if the game is over
-        boolean gameOver = true;
+        // 用来判断游戏是否结束
+        this.gameOver = true;
         this.redPoints = 0;
         this.bluePoints = 0;
-        // invert the points
+        // 翻转点
         if (invertedPoints != null) {
             for (Point p : invertedPoints) {
                 this.pointStatusMap.put(p, status);
             }
         }
-        // show the next color on the right top corner
+        // 在右上角显示下一个颜色
         this.nextColor = status.getFirst().equals("red") ? Color.BLUE : Color.RED;
-        // find the reachable points
+        // 查找所有可以到达的点
         for (Point p : this.flagPoints) {
             if (isReachable(p)) {
                 StringPair currentStatus = new StringPair("empty", "can_be_reach");
                 this.pointStatusMap.put(p, currentStatus);
-                gameOver = false;
+                this.gameOver = false;
             }
             else {
                 StringPair currentStatus = this.pointStatusMap.get(p);
@@ -105,12 +117,13 @@ public class PointPanel extends JPanel{
                 this.bluePoints += 1;
             }
         }
-        if (gameOver) {
+        // 判断游戏是否结束
+        if (this.gameOver) {
             // pop up a new gui to show the result
             JOptionPane.showMessageDialog(null, "WINNER:"+ (this.redPoints > this.bluePoints ? "RED" : "BLUE") + " WIN!", "GAME OVER", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        // find the locked points
+        // 锁定点
         for (Point p : this.flagPoints) {
             if (isReachable(p)) {
                 List<Point> neighbours = findNeighbors(p);
@@ -129,23 +142,23 @@ public class PointPanel extends JPanel{
             StringPair currentStatus = this.pointStatusMap.get(p);
             StringPair newStatus = new StringPair(currentStatus.getFirst(), "locked");
             this.pointStatusMap.put(p, newStatus);
-        }
-
-        // check if the game is over
-        
-
+        }    
     }
 
-    // Get the status of the point
+    public boolean getGameOver() {
+        return this.gameOver;
+    }
+
+    // 获取点的状态
     public StringPair getPointStatus(Point point) {
         return this.pointStatusMap.get(point);
     }
-
+    // 获取点的状态映射
     public Map<Point, StringPair> getPointStatusMap() {
         return this.pointStatusMap;
     }
 
-    // find the neighbors of the point
+    // 查找邻居点
     public List<Point> findNeighbors(Point center) {
         List<Point> real_neighbors = new ArrayList<>( );
         for (Point p : this.flagPoints) {
@@ -156,7 +169,7 @@ public class PointPanel extends JPanel{
         real_neighbors.remove(center); 
         return real_neighbors;
     }
-
+    // 判断点是否可达
     public boolean isReachable(Point center) {
         List<Point> neighbors = findNeighbors(center);
         if (!this.pointStatusMap.get(center).matches("empty", "can_be_reach")) {

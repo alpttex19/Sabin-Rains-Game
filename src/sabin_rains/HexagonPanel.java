@@ -6,7 +6,13 @@ import java.util.List;
 import javax.swing.*;
 
 import sabin_rains.*;
-
+/*
+ * HexagonPanel类，用于绘制六边形
+ * 主要功能：
+ * 1. 绘制六边形
+ * 2. 绘制所有的六边形
+ * 
+ */
 
 public class HexagonPanel extends JPanel{
     private int size = 20; // size of the small hexagons
@@ -17,7 +23,7 @@ public class HexagonPanel extends JPanel{
     public HexagonPanel(){
         setOpaque(false);
     }
-
+    // 生成一个六边形
     public Polygon generateHexagon(int centerX, int centerY){
         // Create a new polygon
         int[] x = new int[6];
@@ -30,7 +36,7 @@ public class HexagonPanel extends JPanel{
 
         return new Polygon(x, y, x.length);
     }
-
+    // 获取所有的六边形的坐标
     public List<Point> getAllpoints(int centerX, int centerY){                
         int[] num = {5,6,7,8,9,8,7,6,5};
         List<Point> points = new ArrayList<>();
@@ -46,7 +52,7 @@ public class HexagonPanel extends JPanel{
         }
         return points;
     }
-
+    // 绘制所有的六边形
     public void paintAllgrid(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(this.hexColor);
